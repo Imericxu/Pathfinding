@@ -23,15 +23,15 @@ public class Canvas extends JPanel
         setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
         setBackground(new Color(0xF4F4F8));
         
-        Timer timer = new Timer(1, (e) ->
-        {
-            repaint();
-        });
-        timer.start();
+//        Timer timer = new Timer(1, (e) ->
+//        {
+//            repaint();
+//        });
+//        timer.start();
         
         startEnd = generateStartAndEnd();
         path = MAP.aStar(startEnd[0], startEnd[1], HModel.EUCLIDEAN);
-        timer.stop();
+//        timer.stop();
     }
     
     private Node[] generateStartAndEnd()
