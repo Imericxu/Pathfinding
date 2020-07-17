@@ -19,7 +19,7 @@ public class Canvas extends JPanel
     private AnimatedColor startColor;
     private AnimatedColor endColor;
     
-    public Canvas() throws InterruptedException
+    public Canvas()
     {
         finished = false;
         ROWS = 20;

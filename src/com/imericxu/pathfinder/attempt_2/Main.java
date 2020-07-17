@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Main
 {
-    public static void main(String[] args) throws InterruptedException
+    public static void main(String[] args)
     {
         JFrame frame = new JFrame("A* Pathfinder");
         Canvas canvas = new Canvas();
