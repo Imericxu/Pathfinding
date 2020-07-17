@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Canvas extends JPanel
 {
-    public static final int CELL_SIZE = 7;
+    public static final int CELL_SIZE = 12;
     private final Timer timer;
     private Map map;
     private Spot[][] grid;
@@ -45,17 +45,14 @@ public class Canvas extends JPanel
         boolean pathFound = false;
         if (!map.getOpenSet().isEmpty())
         {
-    
-            int lowestIndex = 0;
-            for (int i = 1; i < openSet.size(); ++i)
+            Spot current = openSet.get(0);
+            for (Spot spot : openSet.subList(1, openSet.size()))
             {
-                if (openSet.get(i).getF() < openSet.get(lowestIndex).getF())
+                if (spot.getF() < current.getF())
                 {
-                    lowestIndex = i;
+                    current = spot;
                 }
             }
-    
-            Spot current = openSet.get(lowestIndex);
     
             if (current == map.getEnd())
             {
@@ -71,27 +68,24 @@ public class Canvas extends JPanel
                 timer.stop();
             }
     
+            openSet.remove(current);
             closedSet.add(current);
-            openSet.remove(lowestIndex);
     
             for (Spot neighbor : current.getNeighbors())
             {
                 if (!closedSet.contains(neighbor) && !neighbor.isWall())
                 {
-                    float tempG = neighbor.getG() + 1;
-                    if (openSet.contains(neighbor) && tempG < neighbor.getG())
+                    float tempG = current.getG() + 1;
+                    if (tempG < neighbor.getG())
                     {
+                        neighbor.setCameFrom(current);
                         neighbor.setG(tempG);
+                        neighbor.setF(tempG + map.heuristic(neighbor, map.getEnd()));
                     }
-                    else
+                    if (!openSet.contains(neighbor))
                     {
-                        neighbor.setG(tempG);
                         openSet.add(neighbor);
                     }
-    
-                    neighbor.setH(map.heuristic(neighbor, map.getEnd()));
-                    neighbor.setF(neighbor.getG() + neighbor.getH());
-                    neighbor.setCameFrom(current);
                 }
             }
         }

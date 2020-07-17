@@ -10,14 +10,12 @@ import java.util.ArrayList;
 public class Canvas extends JPanel
 {
     private final int CELL_SIZE;
-    private final int ROWS;
-    private final int COLS;
+    private final int ROWS, COLS;
     private final Map MAP;
     private ArrayList<Node> path;
     private Node[] startEnd;
     private boolean finished;
-    private AnimatedColor startColor;
-    private AnimatedColor endColor;
+    private AnimatedColor startColor, endColor;
     
     public Canvas()
     {
@@ -35,7 +33,6 @@ public class Canvas extends JPanel
         finished = true;
         
         // Animate start and end node
-        // Yellow
         startColor = new AnimatedColor(new Color(0x45FF61), 30);
         endColor = new AnimatedColor(new Color(0xBB3BFF), 30);
         Timer timer = new Timer(1, e ->
@@ -57,39 +54,9 @@ public class Canvas extends JPanel
         timer.start();
     }
     
-    private Node[] generateStartAndEnd()
-    {
-        int randRow = (int) (Math.random() * ROWS);
-        int randCol = (int) (Math.random() * COLS);
-        Node start = MAP.getNode(randRow, randCol);
-        
-        Node end;
-        do
-        {
-            randRow = (int) (Math.random() * ROWS);
-            randCol = (int) (Math.random() * COLS);
-            end = MAP.getNode(randRow, randCol);
-        } while (start == end);
-        
-        return new Node[]{start, end};
-    }
-    
-    private int calculateCellSize()
-    {
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        double screenRatio = screen.getWidth() / screen.getHeight();
-        double mapRatio = (double) COLS / ROWS;
-        
-        if (screenRatio > mapRatio)
-        {
-            return (int) ((screen.getHeight() - 100) / ROWS);
-        }
-        else
-        {
-            return (int) (screen.getWidth() / COLS);
-        }
-    }
-    
+    /* * * * * * * * * * * * * * * * * * * * *
+    Painting
+    * * * * * * * * * * * * * * * * * * * * */
     @Override
     public void paintComponent(Graphics g)
     {
@@ -175,5 +142,41 @@ public class Canvas extends JPanel
             int y = node.getRow() * CELL_SIZE + 1;
             g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
         }
+    }
+    
+    /* * * * * * * * * * * * * * * * * * * * *
+    Helper Methods
+    * * * * * * * * * * * * * * * * * * * * */
+    private int calculateCellSize()
+    {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        double screenRatio = screen.getWidth() / screen.getHeight();
+        double mapRatio = (double) COLS / ROWS;
+        
+        if (screenRatio > mapRatio)
+        {
+            return (int) ((screen.getHeight() - 100) / ROWS);
+        }
+        else
+        {
+            return (int) (screen.getWidth() / COLS);
+        }
+    }
+    
+    private Node[] generateStartAndEnd()
+    {
+        int randRow = (int) (Math.random() * ROWS);
+        int randCol = (int) (Math.random() * COLS);
+        Node start = MAP.getNode(randRow, randCol);
+        
+        Node end;
+        do
+        {
+            randRow = (int) (Math.random() * ROWS);
+            randCol = (int) (Math.random() * COLS);
+            end = MAP.getNode(randRow, randCol);
+        } while (start == end);
+        
+        return new Node[]{start, end};
     }
 }

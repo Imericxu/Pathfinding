@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Map
 {
-    private static final int COLS = 100;
-    private static final int ROWS = 100;
+    private static final int COLS = 50;
+    private static final int ROWS = 50;
     private Spot[][] grid;
     private ArrayList<Spot> openSet = new ArrayList<>();
     private ArrayList<Spot> closedSet = new ArrayList<>();
@@ -38,6 +38,8 @@ public class Map
         start.setWall(false);
         end.setWall(false);
         openSet.add(start);
+        start.setG(0);
+        start.setF(heuristic(start, end));
     }
     
     public ArrayList<Spot> getPath()
@@ -47,8 +49,8 @@ public class Map
     
     public float heuristic(Spot p1, Spot p2)
     {
-        return (float) Math.hypot(p1.getCol() - p2.getCol(), p1.getRow() - p2.getRow());
-//        return Math.abs(p1.getCol() - p2.getCol()) + Math.abs(p1.getRow() - p2.getRow());
+//        return (float) Math.hypot(p1.getCol() - p2.getCol(), p1.getRow() - p2.getRow());
+        return Math.abs(p1.getCol() - p2.getCol()) + Math.abs(p1.getRow() - p2.getRow());
     }
     
     public Spot[][] getGrid()

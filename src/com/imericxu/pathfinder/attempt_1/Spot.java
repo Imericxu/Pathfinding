@@ -7,7 +7,6 @@ public class Spot
     private Spot[][] grid;
     private float f;
     private float g;
-    private float h;
     private int row, col;
     private ArrayList<Spot> neighbors = new ArrayList<>();
     private Spot cameFrom;
@@ -16,12 +15,11 @@ public class Spot
     public Spot(Spot[][] grid, int row, int col)
     {
         this.grid = grid;
-        f = 0;
-        g = 0;
-        h = 0;
+        f = Float.POSITIVE_INFINITY;
+        g = Float.POSITIVE_INFINITY;
         this.row = row;
         this.col = col;
-        isWall = Math.random() < 0.3;
+        isWall = Math.random() < 0.25;
     }
     
     public boolean isWall()
@@ -92,16 +90,6 @@ public class Spot
     public void setG(float g)
     {
         this.g = g;
-    }
-    
-    public float getH()
-    {
-        return h;
-    }
-    
-    public void setH(float h)
-    {
-        this.h = h;
     }
     
     public ArrayList<Spot> getNeighbors()

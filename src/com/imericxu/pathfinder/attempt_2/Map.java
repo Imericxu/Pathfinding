@@ -106,21 +106,21 @@ public class Map
             ArrayList<Node> neighbors = getNeighbors(current);
             for (Node neighbor : neighbors)
             {
-                if (!inClosedList(neighbor))
+                if (!closedList.contains(neighbor))
                 {
-                    // Current g + weight of edge (just 1 for now)
-                    double tempG = gScores.get(current) + 1; // + d(current, neighbor)
+                    // Current g + cost of traversal (just 1 for now)
+                    double tempG = gScores.get(current) + 1;
                     if (tempG < gScores.get(neighbor))
                     {
                         cameFrom.put(neighbor, current);
                         gScores.replace(neighbor, tempG);
                         fScores.replace(neighbor, tempG + heuristic(neighbor, end,
                                 HModel.EUCLIDEAN));
-                        
-                        if (!openList.contains(neighbor))
-                        {
-                            openList.add(neighbor);
-                        }
+                    }
+                    
+                    if (!openList.contains(neighbor))
+                    {
+                        openList.add(neighbor);
                     }
                 }
             }
