@@ -1,5 +1,8 @@
 package com.imericxu.pathfinder.attempt_2;
 
+import com.imericxu.pathfinder.attempt_2.animation.AnimatedColor;
+import com.imericxu.pathfinder.attempt_2.animation.HSLColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,28 +13,39 @@ public class Canvas extends JPanel
     private final int ROWS;
     private final int COLS;
     private final Map MAP;
-    private ArrayList<Node> path;
+    private ArrayList<Node> path = new ArrayList<>();
     private Node[] startEnd;
+    private boolean finished;
+    private AnimatedColor startColor;
     
     public Canvas() throws InterruptedException
     {
+        finished = false;
         ROWS = 20;
         COLS = 20;
         MAP = new Map(ROWS, COLS);
-        
+    
         CELL_SIZE = calculateCellSize();
         setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
         setBackground(new Color(0xF4F4F8));
-        
-//        Timer timer = new Timer(1, (e) ->
-//        {
-//            repaint();
-//        });
-//        timer.start();
-        
+    
         startEnd = generateStartAndEnd();
         path = MAP.aStar(startEnd[0], startEnd[1], HModel.EUCLIDEAN);
-//        timer.stop();
+        finished = true;
+        
+        // Animate start and end node
+        // Yellow
+        startColor = new AnimatedColor(new Color(0x45FF61), 30);
+        Timer timer = new Timer(0, e ->
+        {
+            startColor.checkTick();
+            startColor.aLum(20);
+            startColor.aHue(40);
+            startColor.tick();
+            repaint(startEnd[0].getCol() * CELL_SIZE, startEnd[0].getRow() * CELL_SIZE, CELL_SIZE
+                    , CELL_SIZE);
+        });
+        timer.start();
     }
     
     private Node[] generateStartAndEnd()
@@ -76,7 +90,15 @@ public class Canvas extends JPanel
         
         checkerboard(g2);
         colorNodes(g2);
-        drawPath(g2);
+        if (finished)
+        {
+            drawPath(g2);
+        }
+        
+        int x = startEnd[0].getCol() * CELL_SIZE + 1;
+        int y = startEnd[0].getRow() * CELL_SIZE + 1;
+        g2.setColor(HSLColor.toRGB(startColor.hsl));
+        g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
     }
     
     private void checkerboard(Graphics2D g2)
@@ -133,6 +155,7 @@ public class Canvas extends JPanel
             int x = node.getCol() * CELL_SIZE + 1;
             int y = node.getRow() * CELL_SIZE + 1;
             g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+            repaint();
         }
     }
 }
