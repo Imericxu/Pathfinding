@@ -13,10 +13,11 @@ public class Canvas extends JPanel
     private final int ROWS;
     private final int COLS;
     private final Map MAP;
-    private ArrayList<Node> path = new ArrayList<>();
+    private ArrayList<Node> path;
     private Node[] startEnd;
     private boolean finished;
     private AnimatedColor startColor;
+    private AnimatedColor endColor;
     
     public Canvas() throws InterruptedException
     {
@@ -24,11 +25,11 @@ public class Canvas extends JPanel
         ROWS = 20;
         COLS = 20;
         MAP = new Map(ROWS, COLS);
-    
+        
         CELL_SIZE = calculateCellSize();
         setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
         setBackground(new Color(0xF4F4F8));
-    
+        
         startEnd = generateStartAndEnd();
         path = MAP.aStar(startEnd[0], startEnd[1], HModel.EUCLIDEAN);
         finished = true;
@@ -36,13 +37,21 @@ public class Canvas extends JPanel
         // Animate start and end node
         // Yellow
         startColor = new AnimatedColor(new Color(0x45FF61), 30);
-        Timer timer = new Timer(0, e ->
+        endColor = new AnimatedColor(new Color(0xBB3BFF), 30);
+        Timer timer = new Timer(1, e ->
         {
             startColor.checkTick();
             startColor.aLum(20);
             startColor.aHue(40);
             startColor.tick();
             repaint(startEnd[0].getCol() * CELL_SIZE, startEnd[0].getRow() * CELL_SIZE, CELL_SIZE
+                    , CELL_SIZE);
+            
+            endColor.checkTick();
+            endColor.aLum(25);
+            endColor.aHue(-20);
+            endColor.tick();
+            repaint(startEnd[1].getCol() * CELL_SIZE, startEnd[1].getRow() * CELL_SIZE, CELL_SIZE
                     , CELL_SIZE);
         });
         timer.start();
@@ -95,9 +104,15 @@ public class Canvas extends JPanel
             drawPath(g2);
         }
         
-        int x = startEnd[0].getCol() * CELL_SIZE + 1;
-        int y = startEnd[0].getRow() * CELL_SIZE + 1;
-        g2.setColor(HSLColor.toRGB(startColor.hsl));
+        colorSquare(g2, startEnd[0].getRow(), startEnd[0].getCol(), HSLColor.toRGB(startColor.hsl));
+        colorSquare(g2, startEnd[1].getRow(), startEnd[1].getCol(), HSLColor.toRGB(endColor.hsl));
+    }
+    
+    private void colorSquare(Graphics2D g2, int row, int col, Color color)
+    {
+        int x = col * CELL_SIZE + 1;
+        int y = row * CELL_SIZE + 1;
+        g2.setColor(color);
         g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
     }
     
@@ -149,13 +164,16 @@ public class Canvas extends JPanel
     
     private void drawPath(Graphics2D g2)
     {
+        if (path == null)
+        {
+            return;
+        }
         for (Node node : path)
         {
             g2.setColor(new Color(0x00B1CC));
             int x = node.getCol() * CELL_SIZE + 1;
             int y = node.getRow() * CELL_SIZE + 1;
             g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
-            repaint();
         }
     }
 }
