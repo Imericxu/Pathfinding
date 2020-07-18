@@ -73,8 +73,8 @@ public class AnimatedCanvas extends JPanel
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-//        aStarStep();
-        greedySearch();
+        aStarStep();
+//        greedySearch();
         
         checkerboard(g2);
         colorNodes(g2);
