@@ -27,8 +27,11 @@ public class AnimatedCanvas extends JPanel
     private ArrayList<Node> path;
     private AnimatedColor startColor, endColor;
     private boolean pathFound;
+    private boolean begin;
     private int ticks;
     private ArrayList<Node> nodes;
+    private final Timer delayTimer;
+    private int ticksToStart;
     
     public AnimatedCanvas(int rows, int cols)
     {
@@ -45,6 +48,7 @@ public class AnimatedCanvas extends JPanel
         }
         
         pathFound = false;
+        begin = false;
         ticks = 0;
         nodes = new ArrayList<>();
         nodes.ensureCapacity(grid.length * grid[0].length);
@@ -67,6 +71,18 @@ public class AnimatedCanvas extends JPanel
         Timer startEndTimer = getStartEndTimer();
         startEndTimer.start();
         
+        // Delay pathfinding
+        ticksToStart = 10;
+        delayTimer = new Timer(100, e ->
+        {
+            --ticksToStart;
+            if (ticksToStart <= 0)
+            {
+                begin = true;
+            }
+        });
+        delayTimer.start();
+        
         // JPanel
         CELL_SIZE = calculateCellSize();
         setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
@@ -82,8 +98,12 @@ public class AnimatedCanvas extends JPanel
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-//        aStarStep();
-        greedySearch();
+        if (begin)
+        {
+            delayTimer.stop();
+            ticksToStart = 10;
+            aStarStep();
+        }
         
         if (pathFound)
         {
@@ -282,9 +302,15 @@ public class AnimatedCanvas extends JPanel
         {
             for (int times = 0; times < nodes.size() / 30 + 1; ++times)
             {
-                Color randomColor = HSLColor.toRGB((int) (Math.random() * 360), 90, 20);
                 int i = (int) (Math.random() * nodes.size());
                 Node node = nodes.get(i);
+//                if (node.isWall())
+//                {
+//                    colorSquare(g2, node.getRow(), node.getCol(), Color.BLACK);
+//                    continue;
+//                }
+                
+                Color randomColor = HSLColor.toRGB((int) (Math.random() * 360), 90, 20);
                 colorSquare(g2, node.getRow(), node.getCol(), randomColor);
                 nodes.remove(i);
             }

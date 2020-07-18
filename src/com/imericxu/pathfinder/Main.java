@@ -8,8 +8,8 @@ public class Main
 {
     private static JFrame frame;
     private static AnimatedCanvas canvas;
-    private static final int ROWS = 30;
-    private static final int COLS = 30;
+    private static final int ROWS = 40;
+    private static final int COLS = 40;
     
     public static void main(String[] args)
     {
