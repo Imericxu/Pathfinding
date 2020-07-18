@@ -1,7 +1,10 @@
-package com.imericxu.pathfinder.attempt_2;
+package com.imericxu.pathfinder.attempt_2.visual;
 
 import com.imericxu.pathfinder.attempt_2.animation.AnimatedColor;
 import com.imericxu.pathfinder.attempt_2.animation.HSLColor;
+import com.imericxu.pathfinder.attempt_2.essential.HModel;
+import com.imericxu.pathfinder.attempt_2.essential.Map;
+import com.imericxu.pathfinder.attempt_2.essential.Node;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,43 +23,29 @@ public class Canvas extends JPanel
     public Canvas()
     {
         finished = false;
-        ROWS = 20;
-        COLS = 20;
+        ROWS = 40;
+        COLS = 40;
         MAP = new Map(ROWS, COLS);
         
         CELL_SIZE = calculateCellSize();
         setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
-        setBackground(new Color(0xF4F4F8));
+        setBackground(Colors.BACKGROUND);
         
         startEnd = generateStartAndEnd();
         path = MAP.aStar(startEnd[0], startEnd[1], HModel.EUCLIDEAN);
         finished = true;
         
         // Animate start and end node
-        startColor = new AnimatedColor(new Color(0x45FF61), 30);
-        endColor = new AnimatedColor(new Color(0xBB3BFF), 30);
-        Timer timer = new Timer(1, e ->
-        {
-            startColor.checkTick();
-            startColor.aLum(20);
-            startColor.aHue(40);
-            startColor.tick();
-            repaint(startEnd[0].getCol() * CELL_SIZE, startEnd[0].getRow() * CELL_SIZE, CELL_SIZE
-                    , CELL_SIZE);
-            
-            endColor.checkTick();
-            endColor.aLum(25);
-            endColor.aHue(-20);
-            endColor.tick();
-            repaint(startEnd[1].getCol() * CELL_SIZE, startEnd[1].getRow() * CELL_SIZE, CELL_SIZE
-                    , CELL_SIZE);
-        });
-        timer.start();
+        startColor = new AnimatedColor(Colors.START, 30);
+        endColor = new AnimatedColor(Colors.END, 30);
+        Timer startEndTimer = getStartEndTimer();
+        startEndTimer.start();
     }
     
     /* * * * * * * * * * * * * * * * * * * * *
     Painting
     * * * * * * * * * * * * * * * * * * * * */
+    
     @Override
     public void paintComponent(Graphics g)
     {
@@ -85,7 +74,7 @@ public class Canvas extends JPanel
     
     private void checkerboard(Graphics2D g2)
     {
-        g2.setColor(new Color(0xE2E2E2));
+        g2.setColor(Colors.CHECKER);
         for (int row = 0; row < ROWS; ++row)
         {
             for (int col = 0; col < COLS; ++col)
@@ -147,6 +136,7 @@ public class Canvas extends JPanel
     /* * * * * * * * * * * * * * * * * * * * *
     Helper Methods
     * * * * * * * * * * * * * * * * * * * * */
+    
     private int calculateCellSize()
     {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -178,5 +168,25 @@ public class Canvas extends JPanel
         } while (start == end);
         
         return new Node[]{start, end};
+    }
+    
+    private Timer getStartEndTimer()
+    {
+        return new Timer(1, e ->
+        {
+            startColor.checkTick();
+            startColor.aLum(25);
+            startColor.aHue(40);
+            startColor.tick();
+            repaint(startEnd[0].getCol() * CELL_SIZE, startEnd[0].getRow() * CELL_SIZE, CELL_SIZE
+                    , CELL_SIZE);
+            
+            endColor.checkTick();
+            endColor.aLum(25);
+            endColor.aHue(-20);
+            endColor.tick();
+            repaint(startEnd[1].getCol() * CELL_SIZE, startEnd[1].getRow() * CELL_SIZE, CELL_SIZE
+                    , CELL_SIZE);
+        });
     }
 }

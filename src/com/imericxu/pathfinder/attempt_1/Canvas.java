@@ -2,7 +2,6 @@ package com.imericxu.pathfinder.attempt_1;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Canvas extends JPanel
@@ -27,8 +26,7 @@ public class Canvas extends JPanel
         int height = CELL_SIZE * grid.length;
         setSize(width, height);
         
-        ActionListener actionListener;
-        timer = new Timer(1, (e) ->
+        timer = new Timer(0, (e) ->
         {
             repaint();
         });

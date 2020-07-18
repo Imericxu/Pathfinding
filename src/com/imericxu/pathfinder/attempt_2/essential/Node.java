@@ -1,4 +1,4 @@
-package com.imericxu.pathfinder.attempt_2;
+package com.imericxu.pathfinder.attempt_2.essential;
 
 public class Node
 {

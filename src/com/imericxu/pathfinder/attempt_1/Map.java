@@ -49,8 +49,8 @@ public class Map
     
     public float heuristic(Spot p1, Spot p2)
     {
-//        return (float) Math.hypot(p1.getCol() - p2.getCol(), p1.getRow() - p2.getRow());
-        return Math.abs(p1.getCol() - p2.getCol()) + Math.abs(p1.getRow() - p2.getRow());
+        return (float) Math.hypot(p1.getCol() - p2.getCol(), p1.getRow() - p2.getRow());
+//        return Math.abs(p1.getCol() - p2.getCol()) + Math.abs(p1.getRow() - p2.getRow());
     }
     
     public Spot[][] getGrid()

@@ -1,4 +1,4 @@
-package com.imericxu.pathfinder.attempt_2;
+package com.imericxu.pathfinder.attempt_2.essential;
 
 import com.imericxu.pathfinder.attempt_2.maps.MapList;
 
