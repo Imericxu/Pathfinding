@@ -1,25 +1,13 @@
 package com.imericxu.pathfinder.attempt_2.essential;
 
-import com.imericxu.pathfinder.attempt_2.maps.MapList;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Map
 {
     private Node[][] grid;
-    private Node start;
-    private Node end;
     private ArrayList<Node> openList = new ArrayList<>();
     private ArrayList<Node> closedList = new ArrayList<>();
-    
-    public Map(MapList mapSelection)
-    {
-        readMapFile(mapSelection);
-    }
     
     public Map(int rows, int cols)
     {
@@ -69,13 +57,9 @@ public class Map
         
         openList.add(start);
         HashMap<Node, Node> cameFrom = new HashMap<>();
-        /**
-         * Map of total cost of node
-         */
+        // Map of total cost of node
         HashMap<Node, Double> fScores = new HashMap<>();
-        /**
-         * Map of cost from start to node
-         */
+        // Map of cost from start to node
         HashMap<Node, Double> gScores = new HashMap<>();
         
         initializeScores(gScores, fScores);
@@ -202,48 +186,6 @@ public class Map
             return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getCol() - p2.getCol());
         default:
             throw new IllegalArgumentException("Invalid model");
-        }
-    }
-    
-    private void readMapFile(MapList mapSelection)
-    {
-        try
-        {
-            String absolutePath = new File("").getAbsolutePath();
-            File mapFile = new File(absolutePath + "/src/com/imericxu/pathfinder/attempt_2" +
-                    "/maps/" + mapSelection.getName());
-            Scanner sc = new Scanner(mapFile);
-            
-            int rows = sc.nextInt();
-            int cols = sc.nextInt();
-            grid = new Node[rows][cols];
-            
-            for (int row = 0; row < grid.length; ++row)
-            {
-                for (int col = 0; col < grid[0].length; ++col)
-                {
-                    int cell = sc.nextInt();
-                    
-                    if (cell != 1)
-                    {
-                        grid[row][col] = new Node(row, col);
-                        if (cell == 2)
-                        {
-                            start = grid[row][col];
-                        }
-                        else if (cell == 3)
-                        {
-                            end = grid[row][col];
-                        }
-                    }
-                }
-            }
-            sc.close();
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
         }
     }
 }

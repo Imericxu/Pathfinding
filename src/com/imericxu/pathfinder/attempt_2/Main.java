@@ -9,7 +9,8 @@ public class Main
     public static void main(String[] args)
     {
         JFrame frame = new JFrame("A* Pathfinder");
-        AnimatedCanvas canvas = new AnimatedCanvas(30, 30);
+        AnimatedCanvas canvas = new AnimatedCanvas(80, 80);
+//        Canvas canvas = new Canvas();
         frame.add(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setPreferredSize(canvas.getSize());

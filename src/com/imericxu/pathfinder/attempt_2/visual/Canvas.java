@@ -101,17 +101,17 @@ public class Canvas extends JPanel
                 
                 if (node.isWall())
                 {
-                    g2.setColor(new Color(0x545464));
+                    g2.setColor(Colors.WALL);
                     g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
                 }
                 else if (MAP.inOpenList(node))
                 {
-                    g2.setColor(new Color(0x77FED766, true));
+                    g2.setColor(Colors.OPEN);
                     g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
                 }
                 else if (MAP.inClosedList(node))
                 {
-                    g2.setColor(new Color(0x79FF4653, true));
+                    g2.setColor(Colors.CLOSED);
                     g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
                 }
             }
@@ -120,16 +120,15 @@ public class Canvas extends JPanel
     
     private void drawPath(Graphics2D g2)
     {
-        if (path == null)
+        if (path != null)
         {
-            return;
-        }
-        for (Node node : path)
-        {
-            g2.setColor(new Color(0x00B1CC));
-            int x = node.getCol() * CELL_SIZE + 1;
-            int y = node.getRow() * CELL_SIZE + 1;
-            g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+            for (Node node : path)
+            {
+                g2.setColor(Colors.PATH);
+                int x = node.getCol() * CELL_SIZE + 1;
+                int y = node.getRow() * CELL_SIZE + 1;
+                g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+            }
         }
     }
     

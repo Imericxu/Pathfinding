@@ -12,7 +12,8 @@ import java.util.HashMap;
 
 public class AnimatedCanvas extends JPanel
 {
-    private static final HModel HMODEL = HModel.MANHATTAN;
+    private static final HModel HMODEL = HModel.EUCLIDEAN;
+    private static final int DELAY = 0;
     private final int CELL_SIZE;
     private final int ROWS, COLS;
     private Node[][] grid;
@@ -22,7 +23,10 @@ public class AnimatedCanvas extends JPanel
     private HashMap<Node, Node> cameFrom = new HashMap<>();
     private HashMap<Node, Double> fScores = new HashMap<>();
     private HashMap<Node, Double> gScores = new HashMap<>();
+    private ArrayList<Node> path;
     private AnimatedColor startColor, endColor;
+    private boolean pathFound;
+    private int ticks;
     
     public AnimatedCanvas(int rows, int cols)
     {
@@ -38,12 +42,11 @@ public class AnimatedCanvas extends JPanel
             }
         }
         
-        CELL_SIZE = calculateCellSize();
-        setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
-        setBackground(Colors.BACKGROUND);
+        pathFound = false;
+        ticks = 0;
         
+        // Begin A*
         generateEndpoints();
-        
         initializeScores(fScores, gScores);
         openList.add(start);
         gScores.replace(start, 0.0);
@@ -54,6 +57,11 @@ public class AnimatedCanvas extends JPanel
         endColor = new AnimatedColor(Colors.END, 30);
         Timer startEndTimer = getStartEndTimer();
         startEndTimer.start();
+        
+        // JPanel
+        CELL_SIZE = calculateCellSize();
+        setSize(COLS * CELL_SIZE, ROWS * CELL_SIZE);
+        setBackground(Colors.BACKGROUND);
     }
     
     /* * * * * * * * * * * * * * * * * * * * *
@@ -65,10 +73,115 @@ public class AnimatedCanvas extends JPanel
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        checkerboard(g2);
+//        aStarStep();
+        greedySearch();
         
+        checkerboard(g2);
+        colorNodes(g2);
+        drawPath(g2);
         colorSquare(g2, start.getRow(), start.getCol(), HSLColor.toRGB(startColor.hsl));
         colorSquare(g2, end.getRow(), end.getCol(), HSLColor.toRGB(endColor.hsl));
+    }
+    
+    private void aStarStep()
+    {
+        if (!openList.isEmpty() && !pathFound && ticks >= DELAY)
+        {
+            ticks = 0;
+            
+            // Get lowest f score
+            Node current = openList.get(0);
+            for (Node node : openList.subList(1, openList.size()))
+            {
+                if (fScores.get(node) < fScores.get(current))
+                {
+                    current = node;
+                }
+            }
+            
+            path = reconstructPath(cameFrom, current);
+            
+            if (current == end)
+            {
+                pathFound = true;
+                System.out.println("Path found!");
+            }
+            
+            openList.remove(current);
+            closedList.add(current);
+            
+            ArrayList<Node> neighbors = getNeighbors(current);
+            for (Node neighbor : neighbors)
+            {
+                if (!closedList.contains(neighbor))
+                {
+                    // Current g + cost of traversal (just 1 for now)
+                    double tempG = gScores.get(current) + 1;
+                    if (tempG < gScores.get(neighbor))
+                    {
+                        cameFrom.put(neighbor, current);
+                        gScores.replace(neighbor, tempG);
+                        fScores.replace(neighbor, tempG + heuristic(neighbor, end,
+                                HModel.EUCLIDEAN));
+                    }
+                    
+                    if (!openList.contains(neighbor))
+                    {
+                        openList.add(neighbor);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void greedySearch()
+    {
+        if (!openList.isEmpty() && !pathFound && ticks >= DELAY)
+        {
+            ticks = 0;
+            
+            // Get lowest f score
+            Node current = openList.get(0);
+            for (Node node : openList.subList(1, openList.size()))
+            {
+                if (fScores.get(node) < fScores.get(current))
+                {
+                    current = node;
+                }
+            }
+            
+            path = reconstructPath(cameFrom, current);
+            
+            if (current == end)
+            {
+                pathFound = true;
+                System.out.println("Path found!");
+            }
+            
+            openList.remove(current);
+            closedList.add(current);
+            
+            ArrayList<Node> neighbors = getNeighbors(current);
+            for (Node neighbor : neighbors)
+            {
+                if (!closedList.contains(neighbor))
+                {
+                    // Current g + cost of traversal (just 1 for now)
+                    double tempG = gScores.get(current) + 1;
+                    if (tempG < gScores.get(neighbor))
+                    {
+                        cameFrom.put(neighbor, current);
+                        gScores.replace(neighbor, tempG);
+                        fScores.replace(neighbor, heuristic(neighbor, end, HModel.EUCLIDEAN));
+                    }
+                    
+                    if (!openList.contains(neighbor))
+                    {
+                        openList.add(neighbor);
+                    }
+                }
+            }
+        }
     }
     
     private void checkerboard(Graphics2D g2)
@@ -96,6 +209,55 @@ public class AnimatedCanvas extends JPanel
         g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
     }
     
+    private void colorNodes(Graphics2D g2)
+    {
+        for (Node[] row : grid)
+        {
+            for (Node node : row)
+            {
+                int x = node.getCol() * CELL_SIZE + 1;
+                int y = node.getRow() * CELL_SIZE + 1;
+                
+                if (node.isWall())
+                {
+                    g2.setColor(Colors.WALL);
+                    g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+                }
+                else if (openList.contains(node))
+                {
+                    g2.setColor(Colors.OPEN);
+                    g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+                }
+                else if (closedList.contains(node))
+                {
+                    g2.setColor(Colors.CLOSED);
+                    g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+                }
+            }
+        }
+    }
+    
+    private void drawPath(Graphics2D g2)
+    {
+        if (path != null)
+        {
+            if (pathFound)
+            {
+                g2.setColor(Colors.PATH);
+            }
+            else
+            {
+                g2.setColor(Colors.UNFINISHED_PATH);
+            }
+            for (Node node : path)
+            {
+                int x = node.getCol() * CELL_SIZE + 1;
+                int y = node.getRow() * CELL_SIZE + 1;
+                g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+            }
+        }
+    }
+    
     /* * * * * * * * * * * * * * * * * * * * *
     Timers
     * * * * * * * * * * * * * * * * * * * * */
@@ -103,17 +265,19 @@ public class AnimatedCanvas extends JPanel
     {
         return new Timer(1, e ->
         {
+            ++ticks;
+            
             startColor.checkTick();
             startColor.aLum(25);
             startColor.aHue(40);
             startColor.tick();
-            repaint(start.getCol() * CELL_SIZE, start.getRow() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             
             endColor.checkTick();
             endColor.aLum(25);
             endColor.aHue(-20);
             endColor.tick();
-            repaint(end.getCol() * CELL_SIZE, end.getRow() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            
+            repaint();
         });
     }
     
