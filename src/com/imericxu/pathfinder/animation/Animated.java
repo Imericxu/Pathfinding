@@ -1,4 +1,4 @@
-package com.imericxu.pathfinder.attempt_2.animation;
+package com.imericxu.pathfinder.animation;
 
 public abstract class Animated
 {

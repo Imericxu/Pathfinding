@@ -1,10 +1,10 @@
-package com.imericxu.pathfinder.attempt_2.visual;
+package com.imericxu.pathfinder.visual;
 
-import com.imericxu.pathfinder.attempt_2.animation.AnimatedColor;
-import com.imericxu.pathfinder.attempt_2.animation.HSLColor;
-import com.imericxu.pathfinder.attempt_2.essential.HModel;
-import com.imericxu.pathfinder.attempt_2.essential.Map;
-import com.imericxu.pathfinder.attempt_2.essential.Node;
+import com.imericxu.pathfinder.animation.AnimatedColor;
+import com.imericxu.pathfinder.animation.HSLColor;
+import com.imericxu.pathfinder.essential.HModel;
+import com.imericxu.pathfinder.essential.Map;
+import com.imericxu.pathfinder.essential.Node;
 
 import javax.swing.*;
 import java.awt.*;

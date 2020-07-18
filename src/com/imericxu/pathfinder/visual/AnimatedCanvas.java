@@ -1,13 +1,14 @@
-package com.imericxu.pathfinder.attempt_2.visual;
+package com.imericxu.pathfinder.visual;
 
-import com.imericxu.pathfinder.attempt_2.animation.AnimatedColor;
-import com.imericxu.pathfinder.attempt_2.animation.HSLColor;
-import com.imericxu.pathfinder.attempt_2.essential.HModel;
-import com.imericxu.pathfinder.attempt_2.essential.Node;
+import com.imericxu.pathfinder.animation.AnimatedColor;
+import com.imericxu.pathfinder.animation.HSLColor;
+import com.imericxu.pathfinder.essential.HModel;
+import com.imericxu.pathfinder.essential.Node;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class AnimatedCanvas extends JPanel
@@ -27,6 +28,7 @@ public class AnimatedCanvas extends JPanel
     private AnimatedColor startColor, endColor;
     private boolean pathFound;
     private int ticks;
+    private ArrayList<Node> nodes;
     
     public AnimatedCanvas(int rows, int cols)
     {
@@ -44,6 +46,13 @@ public class AnimatedCanvas extends JPanel
         
         pathFound = false;
         ticks = 0;
+        nodes = new ArrayList<>();
+        nodes.ensureCapacity(grid.length * grid[0].length);
+    
+        for (Node[] arr : grid)
+        {
+            nodes.addAll(Arrays.asList(arr));
+        }
         
         // Begin A*
         generateEndpoints();
@@ -72,13 +81,22 @@ public class AnimatedCanvas extends JPanel
     {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+//        aStarStep();
+        greedySearch();
         
-        aStarStep();
-//        greedySearch();
+        if (pathFound)
+        {
+            blackout(g2);
+        }
+        else
+        {
+            checkerboard(g2);
+            colorNodes(g2);
+        }
         
-        checkerboard(g2);
-        colorNodes(g2);
         drawPath(g2);
+        
         colorSquare(g2, start.getRow(), start.getCol(), HSLColor.toRGB(startColor.hsl));
         colorSquare(g2, end.getRow(), end.getCol(), HSLColor.toRGB(endColor.hsl));
     }
@@ -254,6 +272,21 @@ public class AnimatedCanvas extends JPanel
                 int x = node.getCol() * CELL_SIZE + 1;
                 int y = node.getRow() * CELL_SIZE + 1;
                 g2.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+            }
+        }
+    }
+    
+    private void blackout(Graphics2D g2)
+    {
+        if (!nodes.isEmpty())
+        {
+            for (int times = 0; times < nodes.size() / 30 + 1; ++times)
+            {
+                Color randomColor = HSLColor.toRGB((int) (Math.random() * 360), 90, 20);
+                int i = (int) (Math.random() * nodes.size());
+                Node node = nodes.get(i);
+                colorSquare(g2, node.getRow(), node.getCol(), randomColor);
+                nodes.remove(i);
             }
         }
     }

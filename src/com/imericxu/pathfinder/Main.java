@@ -1,6 +1,6 @@
-package com.imericxu.pathfinder.attempt_2;
+package com.imericxu.pathfinder;
 
-import com.imericxu.pathfinder.attempt_2.visual.AnimatedCanvas;
+import com.imericxu.pathfinder.visual.AnimatedCanvas;
 
 import javax.swing.*;
 
@@ -8,8 +8,8 @@ public class Main
 {
     private static JFrame frame;
     private static AnimatedCanvas canvas;
-    private static final int ROWS = 60;
-    private static final int COLS = 80;
+    private static final int ROWS = 30;
+    private static final int COLS = 30;
     
     public static void main(String[] args)
     {

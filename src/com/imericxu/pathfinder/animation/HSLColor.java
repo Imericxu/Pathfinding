@@ -1,4 +1,4 @@
-package com.imericxu.pathfinder.attempt_2.animation;
+package com.imericxu.pathfinder.animation;
 
 import java.awt.*;
 

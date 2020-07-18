@@ -1,4 +1,4 @@
-package com.imericxu.pathfinder.attempt_2.essential;
+package com.imericxu.pathfinder.essential;
 
 import java.util.ArrayList;
 import java.util.HashMap;
