@@ -103,6 +103,8 @@ public class AnimatedCanvas extends JPanel
             delayTimer.stop();
             ticksToStart = 10;
             aStarStep();
+//            greedySearch();
+//            dijkstraStep();
         }
         
         if (pathFound)
@@ -211,6 +213,55 @@ public class AnimatedCanvas extends JPanel
                         cameFrom.put(neighbor, current);
                         gScores.replace(neighbor, tempG);
                         fScores.replace(neighbor, heuristic(neighbor, end, HModel.EUCLIDEAN));
+                    }
+                    
+                    if (!openList.contains(neighbor))
+                    {
+                        openList.add(neighbor);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void dijkstraStep()
+    {
+        if (!openList.isEmpty() && !pathFound && ticks >= DELAY)
+        {
+            ticks = 0;
+            
+            // Get lowest f score
+            Node current = openList.get(0);
+            for (Node node : openList.subList(1, openList.size()))
+            {
+                if (gScores.get(node) < gScores.get(current))
+                {
+                    current = node;
+                }
+            }
+            
+            path = reconstructPath(cameFrom, current);
+            
+            if (current == end)
+            {
+                pathFound = true;
+                System.out.println("Path found!");
+            }
+            
+            openList.remove(current);
+            closedList.add(current);
+            
+            ArrayList<Node> neighbors = getNeighbors(current);
+            for (Node neighbor : neighbors)
+            {
+                if (!closedList.contains(neighbor))
+                {
+                    // Current g + cost of traversal (just 1 for now)
+                    double tempG = gScores.get(current) + 1;
+                    if (tempG < gScores.get(neighbor))
+                    {
+                        cameFrom.put(neighbor, current);
+                        gScores.replace(neighbor, tempG);
                     }
                     
                     if (!openList.contains(neighbor))
